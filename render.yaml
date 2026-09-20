@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: jindo-studio
+    runtime: docker
+    plan: starter
+    healthCheckPath: /_stcore/health
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: JINDO_PROJECTS_DIR
+        value: /var/data/projects
+    disk:
+      name: jindo-data
+      mountPath: /var/data
+      sizeGB: 10
