@@ -1,5 +1,5 @@
 import streamlit as st
-
+import os
 PROJECTS_DIR = os.getenv('JINDO_PROJECTS_DIR', 'projects')
 os.makedirs(PROJECTS_DIR, exist_ok=True)
 from urllib.parse import urlparse, parse_qs
