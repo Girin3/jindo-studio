@@ -122,15 +122,13 @@ def ai_generate(api_key, model, topic, output, ref, ref_text):
 요청하지 않은 shorts/longform 키는 생략한다.'''
     prompt=f'''주제: {topic}\n제작 유형: {", ".join(wanted)}\n레퍼런스 분석 정보: {json.dumps(ref, ensure_ascii=False)}\n레퍼런스 텍스트(없을 수 있음): {ref_text[:12000]}\n\n고정 제작 규칙: {json.dumps(ref.get('preset_rules', DEFAULT_RULES), ensure_ascii=False)}\n\n쇼츠는 한국어 자연 구어체 한 문단, 약 250자, 첫 문장은 강한 의문형 후킹, 팩트 1~2개, 마지막은 경험형 댓글 질문. 장면은 의미 단위로 충분히 나눈다.\n롱폼은 50대 이상이 듣기 편한 1인 낭독형 다큐 구어체로 도입-배경-핵심 정보-사례/오해-정리 구조. 장면별 이미지 프롬프트를 만든다.\n이미지 프롬프트는 영어로 쓰고 모든 장면에 authentic Korean Jindo를 포함한다. 회색/늑대색/브린들 금지, 병원 장면 금지.\n웹 검색으로 핵심 사실을 검증하되 불확실한 내용은 uncertain으로 표시한다.\n{schema_note}'''
     print(f"[OPENAI DEBUG] model={model}, key_present={bool(api_key)}", flush=True)
-        try:
+        
             resp=client.responses.create(model=model, tools=[{'type':'web_search'}], input=[
             {'role':'system','content':SYSTEM_PROMPT}, {'role':'user','content':prompt}
             ])
             raw=resp.output_text
             return json.loads(strip_json_fence(raw)), raw
-        except Exception as e:
-        print(f"[OPENAI ERROR] {type(e).__name__}: {e}", flush=True)
-        raise
+        
 def image_cache_path(project_id, kind, scene_no, prompt):
     key=hashlib.sha256(prompt.encode('utf-8')).hexdigest()[:12]
     folder=os.path.join(PROJECTS_DIR,project_id,'images',kind)
